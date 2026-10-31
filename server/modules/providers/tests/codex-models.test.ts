@@ -9,6 +9,22 @@ const require = createRequire(import.meta.url);
 const findCodexModel = (value: string) =>
   CODEX_PREDEFINED_MODELS.OPTIONS.find((option) => option.value === value);
 
+test('lists GPT-6.1 Sol with its native default and supported effort levels', () => {
+  const model = findCodexModel('gpt-6.1-sol');
+  assert.equal(model?.label, 'GPT-6.1 Sol');
+  assert.equal(model?.effort?.default, 'low');
+  assert.deepEqual(
+    model?.effort?.values.map((effort) => effort.value),
+    ['low', 'medium', 'high', 'xhigh', 'max', 'ultra'],
+  );
+});
+
+test('bundles a Codex CLI with GPT-6.1 Sol metadata', () => {
+  const { version } = require('@openai/codex/package.json') as { version: string };
+  const [major, minor] = version.split('.').map(Number);
+  assert.ok(major > 0 || minor >= 166, `bundled @openai/codex ${version} predates 0.166.0`);
+});
+
 test('lists GPT-6 Sol and GPT-6 Luna with the effort levels the Codex CLI accepts', () => {
   const sol = findCodexModel('gpt-6-sol');
   assert.equal(sol?.label, 'GPT-6 Sol');
